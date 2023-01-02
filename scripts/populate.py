@@ -17,5 +17,3 @@ def populate():
 
     return prices
 
-
-#It might have been that this wasn't working correcly because I didn't actually run load_dotenv before doing os.getenv
