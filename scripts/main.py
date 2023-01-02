@@ -1,5 +1,5 @@
-import web3 #might not need this
-import time #to set delay between price checks
+import web3
+import time 
 import datetime
 from brownie import *
 import os
@@ -23,8 +23,6 @@ ethCurrentBalance = 0 #ETH in wallet for gas
 
 #_______________________________________________________________________________
 
-#contract addresses figure out which of these I need and delete the rest
-#I think I only need the router, I think I'll need position router for the final iteration of the bot that uses derivatives instead of swaps
 load_dotenv()
 #VAULT_ADDRESS = os.getenv('VAULT_ADDRESS')
 ROUTER_ADDRESS = os.getenv('ROUTER_ADDRESS')
@@ -36,7 +34,7 @@ ROUTER_ADDRESS = os.getenv('ROUTER_ADDRESS')
 
 #_______________________________________________________________________________
 
-#token addresses - Decide if I want to add in functionality other than just ETH trading
+#token addresses
 WETH = os.getenv('WETH_TOKEN_ADDRESS')
 #WBTC = os.getenv('WBTC_TOKEN_ADDRESS')
 #LINK = os.getenv('LINK_TOKEN_ADDRESS')
@@ -53,7 +51,6 @@ sellWethPath = [WETH,USDC]
 #_______________________________________________________________________________
 
 #Contracts
-#may want to switch to from_abi just so loading time is reduced, also don't need the ones I don't use
 #vault = Contract.from_explorer(VAULT_ADDRESS)
 router = Contract.from_explorer(ROUTER_ADDRESS)
 #positionRouter = Contract.from_explorer(POSITION_ROUTER_ADDRESS)
@@ -61,14 +58,13 @@ router = Contract.from_explorer(ROUTER_ADDRESS)
 #orderbook = Contract.from_explorer(ORDERBOOK_ADDRESS)
 #reader = Contract.from_explorer(READER_ADDRESS)
 #orderbookReader = Contract.from_explorer(ORDERBOOK_READER_ADDRESS)
-usdcContract = Contract.from_explorer(USDC) #need the token contracts as opposed to the address to be able to actually call methods such as balanceOf()
+usdcContract = Contract.from_explorer(USDC)
 wethContract = Contract.from_explorer(WETH)
 
 #_______________________________________________________________________________
 
 def main(botAccount):
-    #infinite loop - I'll set up break statements for errors but other than
-    #that I want it to run until I stop it manually
+ 
     prices = populate()
     MA4H21.append(calcMA(21,prices)) # get an initial MA location based on pre-populated prices
 
@@ -90,12 +86,11 @@ def main(botAccount):
 
     while(True):
         #time.sleep(4*60*60) #wait 4h between loops to simulate 4h candles
-        time.sleep(1) #Just because we don't want the computer to overheat
+        time.sleep(1) 
 
         if(not waitingMessagePrinted):
             print("Waiting for next 4h candle close...")
             waitingMessagePrinted = True
-        #might want to see if I can check the second against like a (0 or 1 or 2) type thing
         if (datetime.datetime.now().hour %4 == 0 and datetime.datetime.now().minute == 0 and datetime.datetime.now().second == (0 or 1 or 2)): #run a loop at each 4h candle close
             newPrice = getPrice(WETH) #get updated price from the GMX api
             prices.append(newPrice)
